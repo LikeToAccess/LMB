@@ -13,6 +13,7 @@
 from selenium import webdriver
 import os
 import time
+import datetime
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -32,9 +33,31 @@ class Scraper:
 		print("Init finished")
 		#time.sleep(10)
 
+	def wait_until_element(self, stratagy, locator, timeout=10):
+		wait = WebDriverWait(self.driver, timeout)
+		element = wait.until(
+			EC.presence_of_element_located(
+				(
+					stratagy, locator
+				)
+			)
+		)
+		return element
+
+	def open_link(self, url):
+		self.driver.get(url)
+
+	def current_url(self):
+		return self.driver.current_url
+
+	def close(self):
+		self.driver.close()
+
 	def run(self):
 		print("Opening URL")
-		self.driver.get("https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61a7b36a534a139d668b4568")
+		# current_day = datetime.date.today()[:2]
+		self.open_link("https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61a7b36a534a139d668b4568")
+		print(self.wait_until_element(By.XPATH, "//*[@class=\"sc-ifAKCX fsjfiH notranslate\"]/span").text)
 
 
 if __name__ == "__main__":
