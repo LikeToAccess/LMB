@@ -44,6 +44,17 @@ class Scraper:
 		)
 		return element
 
+	def wait_until_elements(self, stratagy, locator, timeout=10):
+		wait = WebDriverWait(self.driver, timeout)
+		elements = wait.until(
+			EC.presence_of_all_elements_located(
+				(
+					stratagy, locator
+				)
+			)
+		)
+		return elements
+
 	def open_link(self, url):
 		self.driver.get(url)
 
@@ -57,9 +68,27 @@ class Scraper:
 		print("Opening URL")
 		# current_day = datetime.date.today()[:2]
 		self.open_link("https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61a7b36a534a139d668b4568")
-		print(self.wait_until_element(By.XPATH, "//*[@class=\"sc-ifAKCX fsjfiH notranslate\"]/span").text)
+		month = self.wait_until_elements(By.XPATH, "//*[@class=\"sc-iwsKbI cpOFXO currentmonth\"]")
+
+		lunch = {}
+		foods = {}
+		for day in month:
+			day_information = day.text.replace("\nzoom_in", "").split("\n")
+			lunch_items = day_information[2:]
+
+			lunch[day_information[0]] = {
+				"lunch_items": lunch_items,
+				"day":         day_information[1],
+			}
+
+			for lunch_item in lunch_items:
+				foods[lunch_item] = day.find_element(By.XPATH, "//*[@class=\"menuItem\"]")
+
+		print(lunch)
+		foods["Walking Turkey Taco"].click()
 
 
 if __name__ == "__main__":
 	scraper = Scraper()
 	scraper.run()
+	# scraper.close()
