@@ -81,11 +81,13 @@ class Scraper:
 				"day":         day_information[1],
 			}
 
-			for lunch_item in lunch_items:
-				foods[lunch_item] = day.find_element(By.XPATH, "//*[@class=\"menuItem\"]")
+			for count, lunch_item in enumerate(lunch_items):
+				foods[lunch_item] = day.find_element(By.XPATH, "//*[@class=\"menuItem\"]")  #
+				print()
 
-		print(lunch)
-		foods["Walking Turkey Taco"].click()
+		# print(lunch)
+		# print(list(foods.keys()))
+		foods["Sweet Potato Waffle Fries"].click()
 
 
 if __name__ == "__main__":
