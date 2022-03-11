@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # filename          : main.py
-# description       : 
+# description       : Find Lunch!?
 # author            : Ian Ault
 # email             : ianault2022@isd282.org
 # date              : 02-14-2022
@@ -10,10 +10,10 @@
 # license           : MIT
 # py version        : 3.10.2 (must run on 3.6 or higher)
 #==============================================================================
-from selenium import webdriver
 import os
 import time
 import datetime
+from selenium import webdriver
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -82,8 +82,8 @@ class Scraper:
 			}
 
 			for count, lunch_item in enumerate(lunch_items):
-				foods[lunch_item] = day.find_element(By.XPATH, "//*[@class=\"menuItem\"]")  #
-				print()
+				foods[lunch_item] = day.find_element(By.XPATH, "//a[@class=\"menuItem\"]")
+				print(foods[lunch_item].text)
 
 		# print(lunch)
 		# print(list(foods.keys()))
@@ -93,4 +93,4 @@ class Scraper:
 if __name__ == "__main__":
 	scraper = Scraper()
 	scraper.run()
-	# scraper.close()
+	scraper.close()
