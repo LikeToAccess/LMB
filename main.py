@@ -67,11 +67,11 @@ class Scraper:
 	def run(self):
 		print("Opening URL")
 		# current_day = datetime.date.today()[:2]
-		self.open_link("https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61a7b36a534a139d668b4568")
+		self.open_link("https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61b2340e534a132a3c43e4b7")
 		month = self.wait_until_elements(By.XPATH, "//*[@class=\"sc-iwsKbI cpOFXO currentmonth\"]")
 
 		lunch = {}
-		foods = {}
+		# foods = {}
 		for day in month:
 			day_information = day.text.replace("\nzoom_in", "").split("\n")
 			lunch_items = day_information[2:]
@@ -81,16 +81,21 @@ class Scraper:
 				"day":         day_information[1],
 			}
 
-			for count, lunch_item in enumerate(lunch_items):
-				foods[lunch_item] = day.find_element(By.XPATH, "//a[@class=\"menuItem\"]")
-				print(foods[lunch_item].text)
+			# for count, lunch_item in enumerate(lunch_items):
+			# 	foods[lunch_item] = day.find_element(By.XPATH, "//a[@class=\"menuItem\"]")
+			# 	# print(foods[lunch_item].text)
+			# 	print(lunch_item)
+			# print("")
+
+		# print(lunch)
+		print(lunch[datetime.datetime.now().strftime("%d")])
 
 		# print(lunch)
 		# print(list(foods.keys()))
-		foods["Sweet Potato Waffle Fries"].click()
+		# foods["Sweet Potato Waffle Fries"].click()
 
 
 if __name__ == "__main__":
 	scraper = Scraper()
 	scraper.run()
-	scraper.close()
+	# scraper.close()
