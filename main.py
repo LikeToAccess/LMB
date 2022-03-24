@@ -98,4 +98,4 @@ class Scraper:
 if __name__ == "__main__":
 	scraper = Scraper()
 	scraper.run()
-	# scraper.close()
+	scraper.close()
