@@ -64,10 +64,11 @@ class Scraper:
 	def close(self):
 		self.driver.close()
 
-	def run(self):
+	def run(self, url):
+		
 		print("Opening URL")
 		# current_day = datetime.date.today()[:2]
-		self.open_link("https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61b2340e534a132a3c43e4b7")
+		self.open_link(url)
 		month = self.wait_until_elements(By.XPATH, "//*[@class=\"sc-iwsKbI cpOFXO currentmonth\"]")
 
 		lunch = {}
@@ -95,7 +96,12 @@ class Scraper:
 		# foods["Sweet Potato Waffle Fries"].click()
 
 
+
+
 if __name__ == "__main__":
 	scraper = Scraper()
-	scraper.run()
+	scraper.run("https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61b234ee534a13863843e4b9&menuType=610aacdb534a1367458b4683&siteCode=20001&showAllNutrients=false")
+	scraper.run("https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61b23594534a132c7b43e4cf&menuType=6102de69534a13557755dde1&siteCode=20001&showAllNutrients=false")
+	scraper.run("https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61b236bd534a13200843e4ae&menuType=6102de5b534a13a26355ddef&siteCode=20001&showAllNutrients=false")
+	scraper.run("https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61b2340e534a132a3c43e4b7&menuType=6102dd39534a13477155de0b&siteCode=20001&showAllNutrients=false")
 	scraper.close()
