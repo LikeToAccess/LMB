@@ -12,6 +12,9 @@
 #==============================================================================
 import os
 import datetime
+import time
+import json
+import uuid
 from selenium import webdriver
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
@@ -20,6 +23,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
+from tqdm import tqdm
+from settings import *
 
 
 links = [
@@ -44,15 +49,37 @@ days_of_the_week = {
 }
 
 
-def read_file(filename, encoding="utf8"):
-	with open(filename, "r", encoding=encoding) as file:
-		lines = file.read().split("\n")
+def remove_file(filename):
+	os.remove(filename)
 
-	return lines
+def read_file(filename, encoding="utf8"):
+	if not os.path.exists(filename): return []
+	with open(filename, "r", encoding=encoding) as file:
+		data = file.read().split("\n")
+
+	return data
 
 def write_file(filename, data, encoding="utf8"):
 	with open(filename, "w", encoding=encoding) as file:
 		file.write(data)
+
+def read_json_file(filename, encoding="utf8"):
+	if not os.path.exists(filename): return []
+	with open(filename, "r", encoding=encoding) as file:
+		data = json.load(file)
+
+	return data
+
+def write_json_file(filename, data, encoding="utf8"):
+	with open(filename, "w", encoding=encoding) as file:
+		json.dump(data, file, indent=4, sort_keys=True)
+
+	return json.dumps(data, indent=4, sort_keys=True)
+
+def append_json_file(filename, data, encoding="utf8"):
+	existing_data = read_json_file(filename, encoding)
+	existing_data.append(data)
+	write_json_file(filename, existing_data, encoding)
 
 
 class Scraper:
@@ -60,12 +87,13 @@ class Scraper:
 		options = Options()
 		user_data_dir = os.path.abspath("selenium_data")
 		options.add_argument(f"user-data-dir={user_data_dir}")
-		options.add_argument("--disable-gpu")
-		# options.add_argument("log-level=3")
-		# self.executable = "chromedriver.exe" if os.name == "nt" else "chromedriver"
+		options.add_argument("log-level=3")
+		if HEADLESS:
+			options.add_argument("--headless")
+			options.add_argument("--disable-gpu")
 		self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+		# self.driver.minimize()
 		print("Init finished")
-		#time.sleep(10)
 
 	def wait_until_element(self, selector, locator, timeout=10):
 		wait = WebDriverWait(self.driver, timeout)
@@ -116,11 +144,26 @@ class Scraper:
 	def close(self):
 		self.driver.close()
 
+	def refresh(self):
+		self.driver.refresh()
+
+	def sign_eula(self):
+		self.driver.execute_script("window.localStorage.setItem('acceptedDisclaimer','1');")
+		self.driver.execute_script(f"window.localStorage.setItem('profile_uuid','{str(uuid.uuid1())}');")
+
+	# def minimize(self):
+	# 	self.driver.minimize_window()
+
 	def get_lunch(self, url):
 		self.open_link(url)
+		self.sign_eula()
+		self.refresh()
 
-		month = self.wait_until_elements(
-			By.XPATH,
+		# time.sleep(1.0)  # Wait for text to finish loading (the elements exist but some text is missing)
+		# ^^^ This doesn't work :(
+		# The above comment ^^^ is a lie :)
+
+		month = self.wait_until_elements_by_xpath(
 			'//*[@class="sc-iwsKbI cpOFXO currentmonth"]')
 		menu = self.wait_until_element_by_xpath(
 			'//*[@id="ng-view"]/react-app/div[1]/div/div[2]/div[2]/span').text
@@ -137,29 +180,46 @@ class Scraper:
 						{ord(i): None for i in extranious_characters}
 					).replace(
 						"w/", " with "
+					).replace(
+						"  ", " "
 					)
 				)
 			day_information[1] = days_of_the_week[day_information[1]]
 
+			while menu == "- SANB Secondary School":
+				time.sleep(0.1)
+				menu = self.wait_until_element_by_xpath(
+					'//*[@id="ng-view"]/react-app/div[1]/div/div[2]/div[2]/span').text
+				print("Updating menu type...")
+
 			lunch[day_information[0]] = {
 				"lunch_items": lunch_items,
-				"day":         day_information[1],
+				# "day":         day_information[1],
 				"menu_type":   menu
 			}
 
 		return lunch, menu
 
 	def run(self):
-		print("Opening URL")
-		full_month_lunch_schedule = {}
-		for link in links:
-			lunch, menu_type = self.get_lunch(link)
-			# print(str(lunch).replace("': {", "':\n{"))
-			full_month_lunch_schedule[menu_type] = lunch
-			# print(lunch)
+		if not os.path.exists("logs"):
+			os.mkdir("logs")
+		date = datetime.datetime.now()
+		filename = date.strftime(f"{LOG_DIRECTORY}LD_%Y-%m-%d.json")
 
-		# print(full_month_lunch_schedule)
-		print(lunch[datetime.datetime.now().strftime("%d")])
+		full_month_lunch_schedule = {}
+		if os.path.exists(filename):
+			if len(read_json_file(filename)) != 4:
+				remove_file(filename)
+			else:
+				print("\n".join(read_file(filename)))
+				return
+		print("Opening URL")
+		for link in tqdm(links):
+			lunch, menu_type = self.get_lunch(link)
+			full_month_lunch_schedule[menu_type] = lunch
+			append_json_file(filename, lunch[date.strftime("%d")])
+
+		print("\n".join(read_file(filename)))
 
 
 if __name__ == "__main__":
