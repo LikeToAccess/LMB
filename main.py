@@ -201,10 +201,14 @@ class Scraper:
 		return lunch, menu
 
 	def run(self):
-		if not os.path.exists("logs"):
-			os.mkdir("logs")
+		os.chdir(f"{LOG_DIRECTORY}/..")
+		logs_folder_name = os.path.basename(os.path.normpath(LOG_DIRECTORY))
+		if not os.path.exists(logs_folder_name):
+			print(logs_folder_name)
+			print(LOG_DIRECTORY)
+			os.mkdir(logs_folder_name)
 		date = datetime.datetime.now()
-		filename = date.strftime(f"{LOG_DIRECTORY}LD_%Y-%m-%d.json")
+		filename = date.strftime(logs_folder_name + "/LD_%Y-%m-%d.json")
 
 		full_month_lunch_schedule = {}
 		if os.path.exists(filename):
