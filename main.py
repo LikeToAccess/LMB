@@ -221,7 +221,7 @@ class Scraper:
 		for link in tqdm(links):
 			lunch, menu_type = self.get_lunch(link)
 			full_month_lunch_schedule[menu_type] = lunch
-			append_json_file(filename, lunch[date.strftime("%d")])
+			append_json_file(filename, lunch[date.strftime("%-d")])
 
 		print("\n".join(read_file(filename)))
 
