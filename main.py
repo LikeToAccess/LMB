@@ -223,7 +223,7 @@ class Scraper:
 			full_month_lunch_schedule[menu_type] = lunch
 			try:
 				append_json_file(filename, lunch[date.strftime("%-d")])
-			except KeyError:
+			except (KeyError, ValueError):
 				append_json_file(filename, lunch[date.strftime("%#d")])
 
 		print("\n".join(read_file(filename)))
