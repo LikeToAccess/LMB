@@ -28,13 +28,13 @@ from settings import *
 
 
 links = [
-	"https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61b234ee534a13863843e4b9&\
+	"https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61c1e808534a139e3dea1b36&\
 menuType=610aacdb534a1367458b4683&siteCode=20001&showAllNutrients=false",  # Grab N Go
-	"https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61b23594534a132c7b43e4cf&\
+	"https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61c1e82b534a131337ea1b3b&\
 menuType=6102de69534a13557755dde1&siteCode=20001&showAllNutrients=false",  # Grill Line
-	"https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61b236bd534a13200843e4ae&\
+	"https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61c1e84d534a13763fea1b3c&\
 menuType=6102de5b534a13a26355ddef&siteCode=20001&showAllNutrients=false",  # Hot Sandwich Line
-	"https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61b2340e534a132a3c43e4b7&\
+	"https://www.schoolnutritionandfitness.com/webmenus2/#/view-no-design?id=61c1e7e6534a136c3fea1b35&\
 menuType=6102dd39534a13477155de0b&siteCode=20001&showAllNutrients=false",  # Daily Dish
 ]
 
