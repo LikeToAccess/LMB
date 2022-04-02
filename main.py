@@ -82,9 +82,13 @@ def append_json_file(filename, data, encoding="utf8"):
 	write_json_file(filename, existing_data, encoding=encoding)
 
 def reformat_json_to_js(filename, encoding="utf8"):
-	json_text = read_file(filename)
+	json_text = "\n".join(read_file(filename))
 	js_text = "var obj = \n" + json_text + ";"
 	write_file(filename + ".js", js_text, encoding=encoding)
+
+def finalize(filename):
+		reformat_json_to_js(filename)
+		print("\n".join(read_file(filename)))
 
 
 class Scraper:
@@ -220,18 +224,20 @@ class Scraper:
 			if len(read_json_file(filename)) != 4:
 				remove_file(filename)
 			else:
-				print("\n".join(read_file(filename)))
+				finalize(filename)
 				return
 		print("Opening URL")
 		for link in tqdm(links):
 			lunch, menu_type = self.get_lunch(link)
 			full_month_lunch_schedule[menu_type] = lunch
-			try:
-				append_json_file(filename, lunch[date.strftime("%-d")])
-			except (KeyError, ValueError):
-				append_json_file(filename, lunch[date.strftime("%#d")])
-
-		print("\n".join(read_file(filename)))
+			if date.strftime("%#e") in lunch:
+				try:
+					append_json_file(filename, lunch[date.strftime("%-d")])
+				except (KeyError, ValueError):
+					append_json_file(filename, lunch[date.strftime("%#e")])
+			else:
+				append_json_file(filename, "['No Lunch Today']")
+		finalize(filename)
 
 
 if __name__ == "__main__":
