@@ -77,9 +77,14 @@ def write_json_file(filename, data, encoding="utf8"):
 	return json.dumps(data, indent=4, sort_keys=True)
 
 def append_json_file(filename, data, encoding="utf8"):
-	existing_data = read_json_file(filename, encoding)
+	existing_data = read_json_file(filename, encoding=encoding)
 	existing_data.append(data)
-	write_json_file(filename, existing_data, encoding)
+	write_json_file(filename, existing_data, encoding=encoding)
+
+def reformat_json_to_js(filename, encoding="utf8"):
+	json_text = read_file(filename)
+	js_text = "var obj = \n" + json_text + ";"
+	write_file(filename + ".js", js_text, encoding=encoding)
 
 
 class Scraper:
