@@ -204,7 +204,15 @@ class Scraper:
 			lunch[day_information[0]] = {
 				"lunch_items": lunch_items,
 				# "day":         day_information[1],
-				"menu_type":   menu
+				"menu_type":   menu.replace(
+					"SANB MSHS - Grab N Go", "Salad Bar"
+				).replace(
+					"SANB MSHS - Grill Line","Grill Line"
+				).replace(
+					"SANB MSHS - Hot Sandwich Line","Cook to Order"
+				).replace(
+					"SANB MSHS - Daily Dish","Main Line"
+				)
 			}
 
 		return lunch, menu
